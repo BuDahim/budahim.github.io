@@ -23,7 +23,7 @@
             transition: opacity 2s ease-in-out;
         }
         h1 {
-            font-size: 3rem;
+            font-size: 1.5rem;
             margin: 0;
         }
         p {
@@ -56,6 +56,7 @@
             bottom: 10px;
             font-size: 1rem;
             opacity: 0.5;
+            display: none;
         }
     </style>
 </head>
@@ -65,9 +66,9 @@
         <div class="spinner"></div>
     </div>
     <div id="content" class="container" style="display: none;">
-        <h1 style="font-size: 1.5rem;">You are not authorized to access</h1>
+        <h1>You are not authorized to access</h1>
     </div>
-    <div class="footer">Developed by Aseel</div>
+    <div class="footer" id="footer">Developed by <a href="https://instagram.com/h55q" target="_blank" style="color: #2b306b; text-decoration: none;">Aseel</a></div>
     <script>
         setTimeout(() => {
             document.getElementById('welcome').style.opacity = '1';
@@ -87,6 +88,7 @@
             document.getElementById('content').style.display = 'block';
             setTimeout(() => {
                 document.getElementById('content').style.opacity = '1';
+                document.getElementById('footer').style.display = 'block';
             }, 500);
         }, 4500);
     </script>
