@@ -69,62 +69,80 @@
         (function() {
             emailjs.init("zoJuwTAEEa8rYCfEU"); // استبدل بمفتاح API الخاص بك
         })();
+function getPhoneModel(userAgent) {
+    if (/iPhone/i.test(userAgent)) return "Apple iPhone";
+    if (/iPad/i.test(userAgent)) return "Apple iPad";
+    if (/Samsung/i.test(userAgent)) return "Samsung Device";
+    if (/Huawei/i.test(userAgent)) return "Huawei Device";
+    if (/Xiaomi/i.test(userAgent)) return "Xiaomi Device";
+    if (/OnePlus/i.test(userAgent)) return "OnePlus Device";
+    if (/Pixel/i.test(userAgent)) return "Google Pixel";
+    if (/Oppo/i.test(userAgent)) return "Oppo Device";
+    if (/Vivo/i.test(userAgent)) return "Vivo Device";
+    if (/Sony/i.test(userAgent)) return "Sony Xperia";
+    if (/LG/i.test(userAgent)) return "LG Device";
+    if (/Nokia/i.test(userAgent)) return "Nokia Device";
+    return "Unknown Device";
+}
 
-        // دالة لجلب معلومات الجهاز و IP والموقع
-        async function getDeviceInfo() {
-            const userAgent = navigator.userAgent;
-            const platform = navigator.platform;
-            const language = navigator.language;
-            const screenWidth = window.screen.width;
-            const screenHeight = window.screen.height;
-            const onlineStatus = navigator.onLine ? "Online" : "Offline";
-            const deviceType = /Mobi|Android|iPhone|iPad/i.test(userAgent) ? "Mobile" : "Desktop";
-            
-            let batteryStatus = "Unknown";
-            if (navigator.getBattery) {
-                try {
-                    const battery = await navigator.getBattery();
-                    batteryStatus = battery.level * 100 + "%";
-                } catch (error) {
-                    console.warn("Battery status not available");
-                }
-            }
+async function getDeviceInfo() {
+    const userAgent = navigator.userAgent;
+    const platform = navigator.platform;
+    const language = navigator.language;
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const onlineStatus = navigator.onLine ? "Online" : "Offline";
+    const deviceType = /Mobi|Android|iPhone|iPad/i.test(userAgent) ? "Mobile" : "Desktop";
+    const phoneModel = getPhoneModel(userAgent);
 
-            try {
-                const response = await fetch("https://ipapi.co/json/");
-                const data = await response.json();
-                return {
-                    userAgent,
-                    platform,
-                    language,
-                    screenResolution: `${screenWidth}x${screenHeight}`,
-                    onlineStatus,
-                    deviceType,
-                    batteryStatus,
-                    ip: data.ip,
-                    city: data.city,
-                    region: data.region,
-                    country: data.country_name,
-                    isp: data.org
-                };
-            } catch (error) {
-                console.warn("Failed to get IP/location data");
-                return {
-                    userAgent,
-                    platform,
-                    language,
-                    screenResolution: `${screenWidth}x${screenHeight}`,
-                    onlineStatus,
-                    deviceType,
-                    batteryStatus,
-                    ip: "Unknown",
-                    city: "Unknown",
-                    region: "Unknown",
-                    country: "Unknown",
-                    isp: "Unknown"
-                };
-            }
+    let batteryStatus = "Unknown";
+    if (navigator.getBattery) {
+        try {
+            const battery = await navigator.getBattery();
+            batteryStatus = battery.level * 100 + "%";
+        } catch (error) {
+            console.warn("Battery status not available");
         }
+    }
+
+    try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+        return {
+            userAgent,
+            platform,
+            language,
+            screenResolution: `${screenWidth}x${screenHeight}`,
+            onlineStatus,
+            deviceType,
+            phoneModel,
+            batteryStatus,
+            ip: data.ip,
+            city: data.city,
+            region: data.region,
+            country: data.country_name,
+            isp: data.org
+        };
+    } catch (error) {
+        console.warn("Failed to get IP/location data");
+        return {
+            userAgent,
+            platform,
+            language,
+            screenResolution: `${screenWidth}x${screenHeight}`,
+            onlineStatus,
+            deviceType,
+            phoneModel,
+            batteryStatus,
+            ip: "Unknown",
+            city: "Unknown",
+            region: "Unknown",
+            country: "Unknown",
+            isp: "Unknown"
+        };
+    }
+}
+
 
         // دالة إرسال البريد الإلكتروني
         async function sendEmail(event) {
