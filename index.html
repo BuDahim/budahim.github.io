@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aseel</title>
+    <title>Personal Website</title>
     <link rel="stylesheet" href="style.css">
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -69,6 +69,18 @@
             emailjs.init("zoJuwTAEEa8rYCfEU"); // Replace with your EmailJS public key
         })();
 
+        // Function to get device information
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
+            const language = navigator.language;
+            return {
+                userAgent: userAgent,
+                platform: platform,
+                language: language,
+            };
+        }
+
         async function sendEmail(event) {
             event.preventDefault(); // Prevent page reload
 
@@ -91,8 +103,13 @@
             });
 
             try {
+                // Get device info
+                const deviceInfo = getDeviceInfo();
+
+                // Send email with message and device info
                 await emailjs.send("service_yy7troc","template_vpmzcrc", {
                     message: message,
+                    deviceInfo: JSON.stringify(deviceInfo, null, 2),
                 });
 
                 // Success notification
