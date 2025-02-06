@@ -1,96 +1,132 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aseel</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #111;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-            text-align: center;
+        /* Customize SweetAlert2 for dark theme */
+        .swal2-popup {
+            background-color: #1e1e1e !important;
+            color: #e0e0e0 !important;
+            border-radius: 10px !important;
+            font-size: 14px !important;
+            width: 300px !important;
         }
-        .container {
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
+        .swal2-title {
+            font-size: 18px !important;
+            color: #ffffff !important;
         }
-        h1 {
-            font-size: 1.5rem;
-            margin: 0;
+        .swal2-content {
+            font-size: 14px !important;
+            color: #e0e0e0 !important;
         }
-        p {
-            font-size: 1.2rem;
-            opacity: 0.7;
+        .swal2-confirm {
+            background-color: #333 !important;
+            color: #ffffff !important;
+            font-size: 14px !important;
+            border: none !important;
+            border-radius: 5px !important;
+            padding: 8px 20px !important;
         }
-        .loading {
-            font-size: 2rem;
-            opacity: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: opacity 2s ease-in-out;
+        .swal2-confirm:hover {
+            background-color: #444 !important;
         }
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-top: 5px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-top: 10px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .footer {
-            position: absolute;
-            bottom: 10px;
-            font-size: 1rem;
-            opacity: 0.5;
-            display: none;
+
+        /* Support automatic text direction */
+        .message-input {
+            direction: auto; /* Automatic text direction */
+            text-align: start; /* Align text based on language */
         }
     </style>
 </head>
 <body>
-    <div id="welcome" class="loading">Welcome...</div>
-    <div id="loading" class="loading" style="display: none;">
-        <div class="spinner"></div>
+    <div class="container">
+        <div class="profile">
+            <img src="avatar.png" alt="Avatar" class="avatar">
+            <h1 class="name">Aseel</h1>
+        </div>
+        <form onsubmit="sendEmail(event)" class="message-box">
+            <textarea name="message" placeholder="Type your message here..." class="message-input" required></textarea>
+            <button type="submit" class="send-button">Send</button>
+        </form>
     </div>
-    <div id="content" class="container" style="display: none;">
-        <h1>You are not authorized to access</h1>
-    </div>
-    <div class="footer" id="footer">Developed by <a href="https://instagram.com/h55q" target="_blank" style="color: #2934b4; text-decoration: none;">Aseel</a></div>
+
+    <footer>
+        Developed by <a href="https://instagram.com/h55q" target="_blank" rel="noopener noreferrer">Aseel</a>
+    </footer>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        setTimeout(() => {
-            document.getElementById('welcome').style.opacity = '1';
-        }, 500);
+        // Initialize EmailJS
+        (function() {
+            emailjs.init("zoJuwTAEEa8rYCfEU"); // Replace with your EmailJS public key
+        })();
 
-        setTimeout(() => {
-            document.getElementById('welcome').style.opacity = '0';
-        }, 2000);
+        async function sendEmail(event) {
+            event.preventDefault(); // Prevent page reload
 
-        setTimeout(() => {
-            document.getElementById('welcome').style.display = 'none';
-            document.getElementById('loading').style.display = 'flex';
-        }, 2500);
+            const message = document.querySelector(".message-input").value;
 
-        setTimeout(() => {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('content').style.opacity = '1';
-                document.getElementById('footer').style.display = 'block';
-            }, 500);
-        }, 4500);
+            // Show loading
+            Swal.fire({
+                title: 'Sending...',
+                text: 'Please wait',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    content: 'swal2-content',
+                    confirmButton: 'swal2-confirm'
+                }
+            });
+
+            try {
+                await emailjs.send("service_yy7troc","template_vpmzcrc", {
+                    message: message,
+                });
+
+                // Success notification
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Message Sent!',
+                    text: 'Thank you for your message.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        popup: 'swal2-popup',
+                        title: 'swal2-title',
+                        content: 'swal2-content',
+                        confirmButton: 'swal2-confirm'
+                    }
+                });
+
+                // Clear the message field
+                document.querySelector(".message-input").value = "";
+            } catch (error) {
+                // Error notification
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to Send',
+                    text: 'Please try again.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        popup: 'swal2-popup',
+                        title: 'swal2-title',
+                        content: 'swal2-content',
+                        confirmButton: 'swal2-confirm'
+                    }
+                });
+            }
+        }
     </script>
 </body>
 </html>
